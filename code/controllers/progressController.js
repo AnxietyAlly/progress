@@ -136,10 +136,17 @@ export async function getAllDailyCheckupResultsBetweenDatesForUser(req, res) {
 }
 
 export async function addNewDailyCheckupResult(req, res) {
+  deleteDailyCheckupResult(req);
   const body = req.body;
   const stmnt = db.prepare('INSERT INTO dailyCheckupResults (user_id, date, result, description) VALUES (?, ?, ?, ?)');
   stmnt.run(body.user_id, body.date, body.result, body.description);
   res.send(
     `New row inserted with values user_id (${body.user_id}) and date (${body.date} and date (${body.result} and date (${body.description})`
   );
+}
+
+async function deleteDailyCheckupResult(req) {
+  const body = req.body;
+  const stmnt = db.prepare(`DELETE FROM dailyCheckupResults where user_id = ? AND date >= ?`);
+  stmnt.run(body.user_id, body.today);
 }
